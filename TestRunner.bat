@@ -2,9 +2,10 @@
 ::========================================
 SET GITHUB_ACCOUNT=arua270
 SET WS_DIR=Workspace
-SET REPO_NAME=Title_Validation_CSV
+SET REPO_NAME=Title_Validation_E2E
 SET APP_VERSION=1.1
-SET MAIN_CLASS=-with-dependencies
+SET TEST_CLASS=AllTest
+::SET MAIN_CLASS=-with-dependencies
 SET ARGS_01=
 ::========================================
  
@@ -26,34 +27,26 @@ IF "%M2%" == "" GOTO EXIT_MVN
 
 ECHO Maven installed
 
-
-
 CALL git --version > nul 2>&1
 IF NOT %ERRORLEVEL% == 0 GOTO EXIT_GIT
 
 ECHO Git installed
-
-
 
 GOTO NEXT
  
 :NEXT
 IF NOT EXIST C:\%WS_DIR% GOTO NO_WORKSPACE
 
-
-
 IF EXIST C:\%WS_DIR%\%REPO_NAME% RMDIR /S /Q C:\%WS_DIR%\%REPO_NAME%
-
-
-
+PAUSE
 CD C:\%WS_DIR%
 git clone https://github.com/%GITHUB_ACCOUNT%/%REPO_NAME%.git
 CD %REPO_NAME%
 SLEEP 2
-CALL mvn package -D build.version="%APP_VERSION%"
+::CALL mvn package -D build.version="%APP_VERSION%"
 ECHO.
 ECHO Executing Java programm ...
-java -jar C:\%WS_DIR%\%REPO_NAME%\target\%REPO_NAME%-%APP_VERSION%-jar%MAIN_CLASS%.jar 
+mvn clean site test -D test=%TEST_CLASS% -D build.version=%APP_VERSION% 
 pause
 GOTO END
  
